@@ -1,13 +1,17 @@
 local setmetatable = setmetatable
 local table = table
 local ipairs = ipairs
+local string = string
+local print = print
+local tostring = tostring
 
-local function new_node(val)
+local function new_node(k,v)
 	return {
 		left = nil,
 		right = nil,
 		depth = 1,
-		value = val,
+		k = k,
+		v = v,
 	}
 end
 
@@ -99,24 +103,24 @@ local function avl_node(parent,node)
 	end
 end
 
-local function add_node(parent,node,val)
+local function add_node(parent,node,k,v)
 	local res = false
-	if node.value == val then
+	if node.k == k then
 		return res
 	end
 	
-	if node.value > val then
+	if node.k > k then
 		if node.left then
-			res = add_node(node,node.left,val)
+			res = add_node(node,node.left,k,v)
 		else
-			node.left = new_node(val)
+			node.left = new_node(k,v)
 			res = true
 		end
 	else
 		if node.right then
-			res = add_node(node,node.right,val)
+			res = add_node(node,node.right,k,v)
 		else
-			node.right = new_node(val)
+			node.right = new_node(k,v)
 			res = true
 		end
 	end
@@ -128,25 +132,25 @@ local function add_node(parent,node,val)
 	return res
 end
 
-local function find_node(node,val)
-	if node.value == val then
-		return node.value
+local function find_node(node,k)
+	if node.k == k then
+		return node.v
 	end
 
-	if node.value > val then
+	if node.k > k then
 		if node.left then
-			return find_node(node.left,val)
+			return find_node(node.left,k)
 		end
 	else
 		if node.right then
-			return find_node(node.right,val)
+			return find_node(node.right,k)
 		end
 	end
 
 	return nil
 end
 
-local function del_node(parent,node,val)
+local function del_node(parent,node,k,v)
 	local function del(p,n,next)
 		if p.root then
 			if next then
@@ -169,7 +173,7 @@ local function del_node(parent,node,val)
 		end
 	end
 	local res = false
-	if node.value == val then
+	if node.k == k then
 		if not node.left and not node.right then
 			del(parent,node)
 		elseif not node.left then
@@ -210,13 +214,13 @@ local function del_node(parent,node,val)
 		return true
 	end
 	
-	if node.value > val then
+	if node.k > k then
 		if node.left then
-			res = del_node(node,node.left,val)
+			res = del_node(node,node.left,k,v)
 		end
 	else
 		if node.right then
-			res = del_node(node,node.right,val)
+			res = del_node(node,node.right,k,v)
 		end
 	end
 
@@ -228,22 +232,23 @@ local function del_node(parent,node,val)
 	return res
 end
 
-local function tree_to_lists(node,nodes_list,level)
-	if not node then
-		return
+local function print_tree_helper(node,level,branch)
+	if node == nil then
+        return nil
+    end
+	local str = ""
+    local r_str = print_tree_helper(node.right, level + 1, "/")
+	if r_str then
+		str = r_str
 	end
+    local indent = string.rep(" ", 4 * level)
+	str = str .. indent .. branch .. tostring(node.k) .. '\n'
 
-	if not nodes_list[level] then
-		nodes_list[level] = {}
+    local l_str = print_tree_helper(node.left, level + 1, "\\")
+	if l_str then
+		str = str .. l_str
 	end
-	table.insert(nodes_list[level],node.value)
-	if node.left then
-		tree_to_lists(node.left,nodes_list,level + 1)
-	end
-
-	if node.right then
-		tree_to_lists(node.right,nodes_list,level + 1)
-	end
+	return str
 end
 
 local M = {}
@@ -286,26 +291,8 @@ function M:find_node(val)
 	return find_node(self.root,val)
 end
 
-function M:printf_tree()
-	local nodes_list = {}
-	tree_to_lists(self.root,nodes_list,1)
-	local str = ""
-
-	local len = #nodes_list
-	for i,list in ipairs(nodes_list) do
-		local n = len - i + 1
-		for j = 1,n do
-			str = str .. "    "
-		end
-
-		for _,num in ipairs(list) do
-			str = str .. num .. "   "
-		end
-
-		str = str .. '\n'
-	end
-	str = str .. 'len = ' .. self.len
-	return str
+function M:print_tree_helper()
+	return print_tree_helper(self.root,0,"")
 end
 
 return M

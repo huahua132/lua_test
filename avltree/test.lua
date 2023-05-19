@@ -12,6 +12,7 @@ for _,num in ipairs(nums) do
 	--print(tree:printf_tree(),#nums)
 end
 
+tree:print_tree_helper()
 for _,num in ipairs(nums) do
 	tree:del_node(num)
 end
@@ -23,14 +24,14 @@ print(collectgarbage("count"))
 local pre_time = os.time()
 for i = 1,1000000 do
 	local num = math.random(1,100000)
-	tree:add_node(num)
+	tree:add_node(num,num)
 end
-print(tree:printf_tree())
+
 print(collectgarbage("count"))
 
 for i = 1,1000000 do
 	local num = math.random(1,100000)
-	tree:add_node(num)
+	tree:add_node(num,num)
 	num = math.random(1,100000)
 	tree:del_node(num)
 end
@@ -41,7 +42,7 @@ for i = 1,1000000 do
 end
 
 print("use time = ",os.time() - pre_time)
-print(tree:printf_tree())
+tree:print_tree_helper()
 
 print(collectgarbage("count"))
 collectgarbage("collect")
