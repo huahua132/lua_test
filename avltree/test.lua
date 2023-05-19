@@ -8,11 +8,14 @@ print(collectgarbage("count"))
 collectgarbage("collect")
 print(collectgarbage("count"))
 for _,num in ipairs(nums) do
-	tree:add_node(num)
+	tree:add_node(num,num * 100)
 	--print(tree:printf_tree(),#nums)
 end
-
-tree:print_tree_helper()
+local t = tree:find_by_range(8,50)
+for i,v in ipairs(t) do
+	print(i,v)
+end
+print(tree:print_tree_helper())
 for _,num in ipairs(nums) do
 	tree:del_node(num)
 end
@@ -42,7 +45,7 @@ for i = 1,1000000 do
 end
 
 print("use time = ",os.time() - pre_time)
-tree:print_tree_helper()
+print(tree:print_tree_helper())
 
 print(collectgarbage("count"))
 collectgarbage("collect")

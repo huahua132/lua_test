@@ -4,6 +4,7 @@ local ipairs = ipairs
 local string = string
 local print = print
 local tostring = tostring
+local assert = assert
 
 local function new_node(k,v)
 	return {
@@ -232,6 +233,23 @@ local function del_node(parent,node,k,v)
 	return res
 end
 
+local function find_by_range(node,b_key,e_key,res_list)
+	if not node then return end
+
+	if node.left and b_key < node.k then
+		find_by_range(node.left,b_key,e_key,res_list)
+	end
+
+	if node.k >= b_key and node.k <= e_key then
+		table.insert(res_list,node.k)
+		table.insert(res_list,node.v)
+	end 
+	
+	if node.right and e_key > node.k then
+		find_by_range(node.right,b_key,e_key,res_list)
+	end
+end
+
 local function print_tree_helper(node,level,branch)
 	if node == nil then
         return nil
@@ -262,12 +280,12 @@ function M:new()
 	return t
 end
 
-function M:add_node(val)
+function M:add_node(k,v)
 	local res = true
 	if not self.root then
-		self.root = new_node(val)
+		self.root = new_node(k,v)
 	else
-		res = add_node(self,self.root,val)
+		res = add_node(self,self.root,k,v)
 	end
 	if res then
 		self.len = self.len + 1
@@ -275,11 +293,11 @@ function M:add_node(val)
 	return res
 end
 
-function M:del_node(val)
+function M:del_node(k)
 	if not self.root then
 		return false
 	end
-	local res = del_node(self,self.root,val)
+	local res = del_node(self,self.root,k)
 	if res then
 		self.len = self.len - 1
 	end
@@ -287,8 +305,19 @@ function M:del_node(val)
 	return res
 end
 
-function M:find_node(val)
-	return find_node(self.root,val)
+function M:find_node(k)
+	return find_node(self.root,k)
+end
+
+function M:len()
+	return self.len
+end
+
+function M:find_by_range(bk,ek)
+	assert(bk < ek)
+	local ret_list = {}
+	find_by_range(self.root,bk,ek,ret_list)
+	return ret_list
 end
 
 function M:print_tree_helper()
