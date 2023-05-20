@@ -105,32 +105,26 @@ local function avl_node(parent,node)
 end
 
 local function add_node(parent,node,k,v)
-	local res = false
 	if node.k == k then
-		return res
+		return
 	end
 	
 	if node.k > k then
 		if node.left then
-			res = add_node(node,node.left,k,v)
+			add_node(node,node.left,k,v)
 		else
 			node.left = new_node(k,v)
-			res = true
 		end
 	else
 		if node.right then
-			res = add_node(node,node.right,k,v)
+			add_node(node,node.right,k,v)
 		else
 			node.right = new_node(k,v)
-			res = true
 		end
 	end
 
-	if res then
-		update_depth(node)
-		avl_node(parent,node)
-	end
-	return res
+	update_depth(node)
+	avl_node(parent,node)
 end
 
 local function find_node(node,k)
