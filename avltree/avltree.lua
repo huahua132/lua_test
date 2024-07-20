@@ -109,22 +109,27 @@ local function add_node(parent,node,k,v)
 		return
 	end
 	
+	local res = nil
 	if node.k > k then
 		if node.left then
-			add_node(node,node.left,k,v)
+			res = add_node(node,node.left,k,v)
 		else
 			node.left = new_node(k,v)
+			res = true
 		end
 	else
 		if node.right then
-			add_node(node,node.right,k,v)
+			res = add_node(node,node.right,k,v)
 		else
 			node.right = new_node(k,v)
+			res = true
 		end
 	end
 
 	update_depth(node)
 	avl_node(parent,node)
+
+	return res
 end
 
 local function find_node(node,k)
@@ -303,7 +308,7 @@ function M:find_node(k)
 	return find_node(self.root,k)
 end
 
-function M:len()
+function M:length()
 	return self.len
 end
 

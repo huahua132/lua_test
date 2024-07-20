@@ -9,6 +9,7 @@ collectgarbage("collect")
 print(collectgarbage("count"))
 for _,num in ipairs(nums) do
 	tree:add_node(num,num * 100)
+	tree:add_node(num,num * 100)
 	--print(tree:printf_tree(),#nums)
 end
 local t = tree:find_by_range(8,50)
@@ -16,10 +17,13 @@ for i,v in ipairs(t) do
 	print(i,v)
 end
 print(tree:print_tree_helper())
+print("len :", tree:length())
 for _,num in ipairs(nums) do
 	tree:del_node(num)
+	tree:del_node(num)
 end
-
+print(tree:print_tree_helper())
+print("len2 :",tree:length())
 print(collectgarbage("count"))
 collectgarbage("collect")
 print(collectgarbage("count"))
